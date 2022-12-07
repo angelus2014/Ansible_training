@@ -1,0 +1,13 @@
+__init__.cpython-310.opt-1.pyc
+__pycache__
+.zsh_history
+.zsh_sessions
+.DS_Store
+.terraform
+hashicorp
+terraform.tfstate
+terraform.tfstate.backup
+*terraform.lock.hcl
+*sublime-project
+*sublime-workspace
+my-key.pub
