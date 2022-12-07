@@ -3,7 +3,7 @@
   hosts: all
   tasks:
     - name: Install & start nginx on both hosts
-      ansible.builtin.apk:
+      community.general.apk:
         name: nginx
         state: present
         update_cache: true
@@ -47,7 +47,7 @@
         state: restarted
       become: true
 
-- name: Set up haproxy on web1 only
+- name: Set up install_haproxy on web1 only
   hosts: web1
   tasks:
     - name: Install & start haproxy on web1 server
