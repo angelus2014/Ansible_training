@@ -2,7 +2,7 @@
 - name: Set up nginx on both web servers
   hosts: all
   tasks:
-    - name: Install & start nginx on both hosts
+    - name: Install nginx on both hosts
       community.general.apk:
         name: nginx
         state: present
@@ -11,7 +11,7 @@
         - install_nginx
       become: true
 
-    - name: Start service nginx, if not started
+    - name: Start & enable nginx
       ansible.builtin.service:
         name: nginx
         state: started
@@ -50,7 +50,7 @@
 - name: Set up install_haproxy on web1 only
   hosts: web1
   tasks:
-    - name: Install & start haproxy on web1 server
+    - name: Install haproxy on web1 server
       ansible.builtin.apk:
         name: haproxy
         state: present
