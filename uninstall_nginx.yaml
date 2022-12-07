@@ -35,5 +35,5 @@
         state: absent
     - name: Recursively remove haproxy directory in /var/lib
       ansible.builtin.file:
-        path: /var/lib/haproxy
+        path: /etc/haproxy
         state: absent
