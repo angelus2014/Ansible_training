@@ -1,46 +1,65 @@
 ---
-- hosts: all
+- name: Set up nginx on both web servers
+  hosts: all
   tasks:
     - name: Install & start nginx on both hosts
       ansible.builtin.apk:
         name: nginx
-        state: latest
-        update_cache: yes
+        state: present
+        update_cache: true
       tags:
         - install_nginx
-      become: yes
+      become: true
+
     - name: Start service nginx, if not started
       ansible.builtin.service:
         name: nginx
         state: started
-      become: yes
-    - name: copy the nginx config file and restart nginx
-      copy:
-        src: static_site.cfg
+      become: true
+
+    - name: Copy the nginx config file and restart nginx
+      ansible.builtin.copy:
+        src: files/static_site.cfg
         dest: /root/static_site.cfg
-      become: yes
-    - name: create symlink
-      file:
+        owner: nginx
+        group: nginx
+        mode: '0644'
+      become: true
+
+    - name: Create symlink
+      ansible.builtin.file:
         src: /root/static_site.cfg
         dest: /etc/nginx/http.d/web.conf
+        owner: nginx
+        group: nginx
         state: link
-      become: yes
-    - name: copy the content of the web site
-      copy:
-        src: static-site-src/
+      become: true
+
+    - name: Copy the content of the web site
+      ansible.builtin.copy:
+        src: files/static-site-src/
         dest: /home/angelo/static-site
-    - name: restart nginx
-      service:
+        mode: '0644'
+
+    - name: Restart nginx
+      ansible.builtin.service:
         name: nginx
         state: restarted
-      become: yes
+      become: true
 
-- hosts: web1
+- name: Set up haproxy on web1 only
+  hosts: web1
   tasks:
     - name: Install & start haproxy on web1 server
-      apk: name=haproxy state=latest
-    - name: start & enable haproxy
-      service:
-          name: haproxy
-          enabled: yes
-          state: started
+      ansible.builtin.apk:
+        name: haproxy
+        state: present
+        update_cache: true
+      tags:
+        - install_haproxy
+      become: true
+    - name: Start & enable haproxy
+      ansible.builtin.service:
+        name: haproxy
+        state: started
+      become: true
