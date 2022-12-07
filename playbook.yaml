@@ -1,0 +1,46 @@
+---
+- hosts: all
+  tasks:
+    - name: Install & start nginx on both hosts
+      ansible.builtin.apk:
+        name: nginx
+        state: latest
+        update_cache: yes
+      tags:
+        - install_nginx
+      become: yes
+    - name: Start service nginx, if not started
+      ansible.builtin.service:
+        name: nginx
+        state: started
+      become: yes
+    - name: copy the nginx config file and restart nginx
+      copy:
+        src: static_site.cfg
+        dest: /root/static_site.cfg
+      become: yes
+    - name: create symlink
+      file:
+        src: /root/static_site.cfg
+        dest: /etc/nginx/http.d/web.conf
+        state: link
+      become: yes
+    - name: copy the content of the web site
+      copy:
+        src: static-site-src/
+        dest: /home/angelo/static-site
+    - name: restart nginx
+      service:
+        name: nginx
+        state: restarted
+      become: yes
+
+- hosts: web1
+  tasks:
+    - name: Install & start haproxy on web1 server
+      apk: name=haproxy state=latest
+    - name: start & enable haproxy
+      service:
+          name: haproxy
+          enabled: yes
+          state: started

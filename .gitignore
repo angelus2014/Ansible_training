@@ -10,4 +10,5 @@ terraform.tfstate.backup
 *terraform.lock.hcl
 *sublime-project
 *sublime-workspace
+*code-workspace
 my-key.pub

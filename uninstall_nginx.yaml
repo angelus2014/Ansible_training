@@ -1,0 +1,30 @@
+---
+- hosts: all
+  tasks:
+    - name: stop nginx
+      service:
+          name: nginx
+          state: stopped
+    - name: ensure nginx is not installed
+      apk: name=nginx state=absent
+    - name: Recursively remove nginx directory in /etc
+      ansible.builtin.file:
+        path: /etc/nginx
+        state: absent
+    - name: Recursively remove nginx directory in /var/lib
+      ansible.builtin.file:
+        path: /var/lib/nginx
+        state: absent
+
+- hosts: web1
+  tasks:
+    - name: stop haproxy
+      service:
+          name: haproxy
+          state: stopped
+    - name: ensure haproxy is not installed
+      apk: name=haproxy state=absent
+    - name: Recursively remove haproxy directory in /var/lib
+      ansible.builtin.file:
+        path: /var/lib/haproxy
+        state: absent
