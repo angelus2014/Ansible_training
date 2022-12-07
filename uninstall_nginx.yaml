@@ -33,7 +33,7 @@
       community.general.apk:
         name: haproxy
         state: absent
-    - name: Recursively remove haproxy directory in /var/lib
+    - name: Recursively remove haproxy directory in /etc
       ansible.builtin.file:
         path: /etc/haproxy
         state: absent
