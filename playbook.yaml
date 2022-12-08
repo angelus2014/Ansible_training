@@ -11,43 +11,50 @@
         - install_nginx
       become: true
 
-    - name: Start & enable nginx
-      ansible.builtin.service:
-        name: nginx
-        state: started
+    - name: Create the www directory inside /var
+      ansible.builtin.file:
+        path: /var/www
+        state: directory
+        owner: nginx
+        group: nginx
+        mode: 0775
+      become: true
+
+    - name: Remove the original default.conf
+      ansible.builtin.file:
+        path: /etc/nginx/http.d/default.conf
+        state: absent
       become: true
 
     - name: Copy the nginx config file and restart nginx
       ansible.builtin.copy:
-        src: files/static_site.cfg
-        dest: /root/static_site.cfg
+        src: templates/default.conf
+        dest: /etc/nginx/http.d/default.conf
         owner: nginx
         group: nginx
         mode: '0644'
-      become: true
-
-    - name: Create symlink
-      ansible.builtin.file:
-        src: /root/static_site.cfg
-        dest: /etc/nginx/http.d/web.conf
-        owner: nginx
-        group: nginx
-        state: link
       become: true
 
     - name: Copy the content of the web site
       ansible.builtin.copy:
         src: files/static-site-src/
-        dest: /home/angelo/static-site
+        dest: /var/www/static-site
+        owner: nginx
+        group: nginx
         mode: '0644'
+      become: true
 
-    - name: Restart nginx
+    - name: Extend the static web site with some local information
+      ansible.builtin.script: files/welcome.sh
+      become: true
+
+    - name: Start/Restart nginx
       ansible.builtin.service:
         name: nginx
         state: restarted
       become: true
 
-- name: Set up install_haproxy on web1 only
+- name: Set up haproxy on web1 only
   hosts: web1
   tasks:
     - name: Install haproxy on web1 server
@@ -58,8 +65,22 @@
       tags:
         - install_haproxy
       become: true
-    - name: Start & enable haproxy
+
+    - name: Remove the original haproxy.cfg
+      ansible.builtin.file:
+        path: /etc/haproxy/haproxy.cfg
+        state: absent
+      become: true
+
+    - name: Copy the round robin configuration
+      ansible.builtin.copy:
+        src: templates/haproxy.cfg
+        dest: /etc/haproxy/haproxy.cfg
+        mode: 0644
+      become: true
+
+    - name: Start/Restart haproxy
       ansible.builtin.service:
         name: haproxy
-        state: started
+        state: restarted
       become: true
