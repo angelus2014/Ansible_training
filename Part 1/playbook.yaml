@@ -32,7 +32,7 @@
         dest: /etc/nginx/http.d/default.conf
         owner: nginx
         group: nginx
-        mode: '0644'
+        mode: 0644
       become: true
 
     - name: Copy the content of the web site
@@ -41,7 +41,7 @@
         dest: /var/www/static-site
         owner: nginx
         group: nginx
-        mode: '0644'
+        mode: 0644
       become: true
 
     - name: Extend the static web site with some local information
@@ -58,7 +58,7 @@
   hosts: web1
   tasks:
     - name: Install haproxy on web1 server
-      ansible.builtin.apk:
+      community.general.apk:
         name: haproxy
         state: present
         update_cache: true

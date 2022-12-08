@@ -29,10 +29,12 @@
       ansible.builtin.service:
         name: haproxy
         state: stopped
+
     - name: Ensure haproxy is not installed
       community.general.apk:
         name: haproxy
         state: absent
+
     - name: Recursively remove haproxy directory in /etc
       ansible.builtin.file:
         path: /etc/haproxy
